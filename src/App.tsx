@@ -2,11 +2,14 @@ import React, { Component } from "react";
 import Loader from "react-loader";
 
 import "./App.css";
+import CharacterList from "./components/CharacterList";
 import { Character, getCharactersByName } from "./lib/api";
 import logger from "./lib/logger";
 
 type AppState = {
+  notFound: boolean,
   isLoading: boolean,
+  lastSearchValue: string,
   results: Character[],
   searchValue: string,
 };
@@ -14,6 +17,8 @@ type AppState = {
 class App extends Component<{}, AppState> {
   public state: AppState = {
     isLoading: false,
+    lastSearchValue: "",
+    notFound: false,
     results: [],
     searchValue: "",
   };
@@ -23,36 +28,17 @@ class App extends Component<{}, AppState> {
       searchValue: e.target.value,
     })
 
-  public handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  public handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.setState({ isLoading: true });
+    this.setState(state => ({ isLoading: true, lastSearchValue: state.searchValue }));
     logger.debug(`submitted with query: ${this.state.searchValue}`);
-    const { results } = await getCharactersByName(this.state.searchValue);
-    this.setState({ results, isLoading: false });
+    getCharactersByName(this.state.searchValue)
+      .then(({ results }) => this.setState({ results, notFound: false, isLoading: false }))
+      .catch(() => this.setState({ notFound: true, results: [], isLoading: false }));
   }
 
-  public renderResultsSection = () => (
-    <div className="results">
-      <Loader loaded={!this.state.isLoading}>
-        {!!this.state.results.length && <h2>Results</h2>}
-        {this.renderCharacters()}
-      </Loader>
-    </div>
-  )
-
-  public renderCharacters = () => this.state.results.map(character => (
-    <div className="character" key={character.id}>
-      <h3>{character.name}</h3>
-      <img src={character.image} alt={character.name} />
-      <p><b>Species:</b> {character.species}</p>
-      <p><b>Gender:</b> {character.gender}</p>
-      <p><b>Status:</b> {character.status}</p>
-      <p><b>From:</b> {character.origin.name}</p>
-      <p><b>Last Location:</b> {character.location.name}</p>
-    </div>
-  ))
-
   public render() {
+    const { isLoading, lastSearchValue, notFound, results, searchValue } = this.state;
     return (
       <div className="App">
         <div className="search">
@@ -62,12 +48,19 @@ class App extends Component<{}, AppState> {
               onChange={this.handleSearchValueChange}
               type="text"
               placeholder="Character Name"
-              value={this.state.searchValue}
+              value={searchValue}
             />
             <input type="submit" value="Search!" />
           </form>
         </div>
-        {this.renderResultsSection()}
+        <div className="results">
+          <Loader loaded={!isLoading}>
+            {notFound
+              ? <p className="not-found">No results found for {lastSearchValue}</p>
+              : <CharacterList characters={results} searchValue={lastSearchValue} />
+            }
+          </Loader>
+        </div>
       </div>
     );
   }
