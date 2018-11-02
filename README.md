@@ -1,44 +1,71 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Rick and Morty API Search
 
-## Available Scripts
+A small app that acts as a front-end to the [Rick and Morty API](https://rickandmortyapi.com/)
+characters endpoint.
 
-In the project directory, you can run:
+This project uses React and TypeScript and was bootstrapped with
+[Create React App](https://github.com/facebook/create-react-app).
+
+## How to Start
+
+In the project directory, first run `npm install` to install the dependencies. Then you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Runs the app in the development mode. Should automatically open
+[http://localhost:3000](http://localhost:3000) for viewing in the browser.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Alternatively, you can follow the directions below to build and run a production-optimized version.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Builds the app for production to the `build` folder. It correctly bundles React in production mode
+and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Once this is done, you can easily serve it with a static server by running `npx serve build`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Discussion
 
-### `npm run eject`
+This was a fun little project to build. Some things to note:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Create React App & TypeScript
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+[Create React App](https://github.com/facebook/create-react-app) just released version 2.1 a few
+days ago as of this writing (1 Nov 2018). It now has built-in support for generating TypeScript
+projects. I decided to try it out.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+I made the [compiler settings](tsconfig.json) a bit stricter and added
+[TSLint](https://palantir.github.io/tslint/).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### API Wrapper
 
-## Learn More
+I built a [small wrapper around the API](src/lib/api.ts). It uses `axios` for network requests and
+uses `node-cache` to cache API responses for 10 minutes.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+It is also [tested using Jest](src/lib/api.test.ts). Note that the tests are set to skip by default
+since they hit the live API.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Styling
+
+I used [styled-components](https://www.styled-components.com/) for styling because it's awesome.
+
+### Errors
+
+The API returns a 404 when a search term does not yield any results. This is bad behavior and is
+kind of annoying; even though errors are caught/handled, you will still see red in the developer
+console even when the app is working as expected. Oh well.
+
+### Possible Next Steps
+
+I had to knock off, but some possible next steps (which I may end up implementing if I have time)
+include:
+
+* Support for filtering characters by criteria
+* Support for locations and episodes
+* Routing for show pages and navigation
+* Pagination (results are currently limited to the first 20)
+* Autocompletion for search
+
+## Etc
+
+Feel free to use this project for whatever you'd like. Feedback and contributions are totally welcome!
