@@ -60,7 +60,7 @@ const ResultsSection = styled.div`
   padding: 33px 0 50px;
 `;
 
-class App extends Component<{}, AppState> {
+export default class App extends Component<{}, AppState> {
   public state: AppState = {
     isLoading: false,
     lastSearchValue: "",
@@ -111,5 +111,3 @@ class App extends Component<{}, AppState> {
     );
   }
 }
-
-export default App;
