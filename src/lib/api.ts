@@ -21,7 +21,7 @@ type CharactersResponseInfo = {
   prev: string,
 };
 
-type Character = {
+export type Character = {
   id: number,
   name: string,
   status: string,
